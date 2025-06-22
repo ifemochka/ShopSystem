@@ -26,13 +26,11 @@ public class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
     {
         var evt = context.Message;
 
-        // идемпотентность через Inbox
         if (await _db.InboxMessages.AnyAsync(x => x.Id == context.MessageId)) return;
 
         var account = await _db.Accounts.FirstOrDefaultAsync(a => a.UserId == evt.UserId);
         if (account == null || account.Balance < evt.Amount)
         {
-            // лог ошибки
             return;
         }
 
