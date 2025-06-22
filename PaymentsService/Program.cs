@@ -20,16 +20,18 @@ builder.Services.AddDbContext<PaymentsDbContext>(opt =>
 builder.Services.AddScoped<IPaymentsProcessor, PaymentsProcessor>();
 builder.Services.AddScoped<IMessagePublisher, MessagePublisher>();
 
+var configuration = builder.Configuration;
+
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<OrderCreatedConsumer>();
 
     x.UsingRabbitMq((ctx, cfg) =>
     {
-        cfg.Host("rabbitmq", "/", h =>
+        cfg.Host(configuration["RabbitMq:Host"], "/", h =>
         {
-            h.Username("guest");
-            h.Password("guest");
+            h.Username(configuration["RabbitMq:Username"]);
+            h.Password(configuration["RabbitMq:Password"]);
         });
 
         cfg.ReceiveEndpoint("order-created-queue", e =>
@@ -38,6 +40,7 @@ builder.Services.AddMassTransit(x =>
         });
     });
 });
+
 
 
 var app = builder.Build();

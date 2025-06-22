@@ -18,14 +18,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var configuration = builder.Configuration;
+
 builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((ctx, cfg) =>
     {
-        cfg.Host("rabbitmq", "/", h =>
+        cfg.Host(configuration["RabbitMq:Host"], "/", h =>
         {
-            h.Username("guest");
-            h.Password("guest");
+            h.Username(configuration["RabbitMq:Username"]);
+            h.Password(configuration["RabbitMq:Password"]);
         });
     });
 });

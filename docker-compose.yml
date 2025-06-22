@@ -6,6 +6,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ordersdb     
     ports:
       - "5432:5432"
     volumes:
@@ -41,6 +42,9 @@ services:
     environment:
       ConnectionStrings__Default: "Host=postgres;Port=5432;Database=ordersdb;Username=postgres;Password=postgres"
       ASPNETCORE_URLS: http://+:8080
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__Username: "guest"
+      RabbitMq__Password: "guest"
     ports:
       - "5001:8080"
       
@@ -54,6 +58,9 @@ services:
     environment:
       ConnectionStrings__Default: "Host=postgres;Port=5432;Database=payments_db;Username=postgres;Password=postgres"
       ASPNETCORE_URLS: http://+:8080
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__Username: "guest"
+      RabbitMq__Password: "guest"
     ports:
       - "5002:8080"
 
