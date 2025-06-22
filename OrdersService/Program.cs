@@ -36,6 +36,32 @@ builder.Services.AddHostedService<OutboxPublisher>();
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
+
+    const int maxRetries = 10;
+    int retry = 0;
+    while (true)
+    {
+        try
+        {
+            db.Database.Migrate(); 
+            break; 
+        }
+        catch (Exception ex)
+        {
+            retry++;
+            if (retry > maxRetries)
+                throw;
+
+            Console.WriteLine($"[Database] Retry {retry} - waiting 5s... {ex.Message}");
+            Thread.Sleep(5000); 
+        }
+    }
+}
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
